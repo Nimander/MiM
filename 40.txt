@@ -1,0 +1,16 @@
+﻿PROG SEGMENT CODE
+LED BIT P2.1
+SWITCH BIT P3.0
+CSEG AT 0
+JMP start
+RSEG PROG
+start:
+	JB SWITCH, change	;jezeli switch==1 to skocz do etykiety change
+	SJMP start			
+change:		
+	CPL LED				;!LED zeby zmienic stan diody
+	;CPL SWITCH			;!SWITCH zeby wylaczyc przycisk, mozliwe ze nie potrzebne
+	MOV P3, #0
+	SJMP start
+END
+	

@@ -1,0 +1,15 @@
+PROG SEGMENT CODE
+CSEG AT 0
+JMP start
+RSEG PROG
+	
+start:
+	MOV A, P3
+	JNZ change
+	SJMP start
+	
+change:
+	XRL P2, A
+	MOV P3, #0x00
+	SJMP start
+END
