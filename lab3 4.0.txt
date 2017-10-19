@@ -1,0 +1,44 @@
+PROG SEGMENT CODE
+key BIT P3.0
+CSEG AT 0
+JMP define
+RSEG PROG
+define:
+	MOV R0, #0x01
+	MOV B, #0x02
+	MOV TMOD, #0x01		;tryb 16 bitowy
+	SJMP start
+	
+start:
+	JB key, $			;dopoki klawisz nie jest wcisniety stoj w miejscu
+	SETB TR0			;jak zostanie wcisniety to start timera
+	SJMP loop			;i leci do petli
+	
+loop:
+	MOV TH0, #0x4c		;ustawia na 19457
+	MOV TL0, #0x01	
+	JNB TF0, $			;0.05sekundy czekaj
+	CPL TF0				;usuwa flage przepelnienia
+	ADD A, #0x01		;po uplynieciu 0.05 dodaj 1 do Akumulatora
+	JNB key, loop		;jezeli klawisz dalej wcisniety to kolejne 0.05sek	
+	SJMP wait
+	
+wait:
+	MOV TH0, #0x4c		;ustawia na 19457
+	MOV TL0, #0x01
+	JNB TF0, $			;0.05sek
+	CPL TF0
+	SUBB A, #0x01			
+	JNZ wait		;jezeli akumulator nie jest zerem
+	CLR TR0
+	SJMP light
+	
+light:
+	MOV A, R0		;w r0 jest nr diody ktora powiina byc zapalona
+	XRL P2, A		;teraz zapalone sa odpowienie diody	
+	MUL AB			;mnozenie A * 2 (kolejna dioda)
+	MOV R0, A	
+	MOV A, #0x00
+	SJMP start
+	
+END
