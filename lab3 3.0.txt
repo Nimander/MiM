@@ -1,0 +1,17 @@
+PROG SEGMENT CODE
+dioda BIT P2.0
+CSEG AT 0
+JMP start
+RSEG PROG
+	
+start:
+	MOV TMOD, #0x01		
+	SETB TR0			
+	SJMP loop
+	
+loop:
+	JNB TF0, $				
+	CPL TF0				
+	CPL dioda
+	SJMP loop
+END
