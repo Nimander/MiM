@@ -1,0 +1,29 @@
+CSEG AT 0
+AJMP reset
+
+CSEG AT 0Bh
+AJMP przelacz
+
+CSEG AT 30h
+reset:
+	MOV TMOD,#00000010b ; tryb 2 licznik sygnalu taktujacego
+	MOV TH0,#-25 ; zaladowanie wartosci poczatkowej
+	SETB ET0
+	SETB EA
+	SETB TR0 ; podlaczenie sygnalu do licznika
+	
+loop:
+	ACALL delay ; przykladowy program glówny
+	CPL P2.7
+	SJMP loop
+	
+Przelacz:
+	CPL P2.0 ; zmiana stanu linii portu na przeciwny
+	RETI
+	
+delay:
+	MOV R0,#2
+del2:
+	DJNZ R0,del2
+	RET
+END
